@@ -1,0 +1,11 @@
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\service\EndpointStats.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\model\LogEvent.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\repository\AnomalyRepository.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\service\BaselineManager.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\AnomalyDetectionServiceApplication.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\controller\AnomalyController.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\model\AnomalyEvent.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\service\LogParserService.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\service\LogIngestionService.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\service\AnomalyDetectorService.java
+D:\final yr project\Anomaly detection app\src\main\java\com\anomaly\service\AnomalyService.java
