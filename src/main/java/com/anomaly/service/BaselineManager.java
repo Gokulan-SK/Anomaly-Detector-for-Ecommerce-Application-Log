@@ -14,7 +14,10 @@ public class BaselineManager {
         if (event.getTimestamp() == null) {
             return;
         }
-        String endpoint = event.getEndpoint() != null ? event.getEndpoint() : "UNKNOWN_ENDPOINT";
+        String endpoint = event.getEndpoint();
+        if (endpoint == null || endpoint.trim().isEmpty()) {
+            endpoint = "UNKNOWN_ENDPOINT";
+        }
         EndpointStats stats = endpointStatsMap.computeIfAbsent(endpoint, k -> new EndpointStats());
         boolean isError = event.getHttpStatus() != null && event.getHttpStatus() >= 400;
         stats.addEvent(event.getTimestamp(), event.getLatencyMs(), isError);

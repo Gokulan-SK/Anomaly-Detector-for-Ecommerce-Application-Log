@@ -39,7 +39,11 @@ public class AnomalyDetectorService {
             AnomalyEvent anomaly = new AnomalyEvent();
             anomaly.setAnomalyType("SYSTEM");
             anomaly.setDescription(desc);
-            anomaly.setSourceLayer(logEvent.getEndpoint() != null ? logEvent.getEndpoint() : "UNKNOWN");
+            String rawEndpoint = logEvent.getEndpoint();
+            if (rawEndpoint == null || rawEndpoint.trim().isEmpty()) {
+                rawEndpoint = "UNKNOWN_ENDPOINT";
+            }
+            anomaly.setSourceLayer(rawEndpoint);
             anomaly.setSessionId(logEvent.getSessionId());
             anomaly.setCorrelationId(logEvent.getCorrelationId());
             anomaly.setSeverity("CRITICAL");
@@ -50,11 +54,12 @@ public class AnomalyDetectorService {
         baselineManager.update(logEvent);
 
         String key = logEvent.getSessionId();
-        if (key == null) {
+        if (key == null || key.trim().isEmpty()) {
             key = logEvent.getCorrelationId();
         }
-        if (key == null) {
+        if (key == null || key.trim().isEmpty()) {
             key = "anonymous";
+            log.debug("Using fallback session key: anonymous");
         }
 
         Deque<LogEvent> currentDeque = sessionEvents.computeIfAbsent(key, k -> new ArrayDeque<>());
@@ -99,7 +104,11 @@ public class AnomalyDetectorService {
             }
         }
 
-        String endpoint = logEvent.getEndpoint() != null ? logEvent.getEndpoint() : "UNKNOWN_ENDPOINT";
+        String endpoint = logEvent.getEndpoint();
+        if (endpoint == null || endpoint.trim().isEmpty()) {
+            endpoint = "UNKNOWN_ENDPOINT";
+            log.debug("Using fallback endpoint: UNKNOWN_ENDPOINT");
+        }
         boolean baselineReady = baselineManager.isBaselineReady(endpoint);
         EndpointStats stats = baselineManager.getStats(endpoint);
         boolean hasTraffic = stats != null && stats.hasSufficientTraffic();
@@ -224,21 +233,30 @@ public class AnomalyDetectorService {
         AnomalyEvent anomaly = new AnomalyEvent();
         anomaly.setAnomalyType(type);
         anomaly.setDescription(reason);
-        anomaly.setSourceLayer(logEvent.getEndpoint() != null ? logEvent.getEndpoint() : "UNKNOWN");
+        String rawEndpoint = logEvent.getEndpoint();
+        if (rawEndpoint == null || rawEndpoint.trim().isEmpty()) {
+            rawEndpoint = "UNKNOWN_ENDPOINT";
+        }
+        anomaly.setSourceLayer(rawEndpoint);
         anomaly.setSessionId(logEvent.getSessionId());
         anomaly.setCorrelationId(logEvent.getCorrelationId());
 
         int score = 0;
         try {
-            String endpoint = logEvent.getEndpoint() != null ? logEvent.getEndpoint() : "UNKNOWN_ENDPOINT";
+            String endpoint = logEvent.getEndpoint();
+            if (endpoint == null || endpoint.trim().isEmpty()) {
+                endpoint = "UNKNOWN_ENDPOINT";
+            }
             EndpointStats stats = baselineManager.getStats(endpoint);
             boolean hasStats = (stats != null);
 
             String key = logEvent.getSessionId();
-            if (key == null)
+            if (key == null || key.trim().isEmpty()) {
                 key = logEvent.getCorrelationId();
-            if (key == null)
+            }
+            if (key == null || key.trim().isEmpty()) {
                 key = "anonymous";
+            }
             Deque<LogEvent> currentDeque = sessionEvents.get(key);
 
             if ("LATENCY".equals(type)) {
