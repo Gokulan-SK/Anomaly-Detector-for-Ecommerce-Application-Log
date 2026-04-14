@@ -40,8 +40,8 @@ public class AnomalyDetectorService {
             anomaly.setAnomalyType("SYSTEM");
             anomaly.setDescription(desc);
             String rawEndpoint = logEvent.getEndpoint();
-            if (rawEndpoint == null || rawEndpoint.trim().isEmpty()) {
-                rawEndpoint = "UNKNOWN_ENDPOINT";
+            if (rawEndpoint == null || rawEndpoint.trim().isEmpty() || "UNKNOWN_ENDPOINT".equals(rawEndpoint.trim())) {
+                rawEndpoint = "System-wide";
             }
             anomaly.setSourceLayer(rawEndpoint);
             anomaly.setSessionId(logEvent.getSessionId());
@@ -231,11 +231,27 @@ public class AnomalyDetectorService {
 
     private AnomalyEvent buildAnomaly(String type, String reason, LogEvent logEvent) {
         AnomalyEvent anomaly = new AnomalyEvent();
-        anomaly.setAnomalyType(type);
-        anomaly.setDescription(reason);
+        
+        String mappedType = type;
+        if ("GLOBAL_LATENCY".equals(type)) mappedType = "Slow User Experience";
+        else if ("GLOBAL_VOLUME".equals(type)) mappedType = "Unusual Traffic Activity";
+        else if ("LATENCY".equals(type)) mappedType = "Slow Response Detected";
+        else if ("VOLUME".equals(type)) mappedType = "High Activity Detected";
+        else if ("ERROR".equals(type)) mappedType = "Repeated Request Failures";
+        else if ("SEQUENTIAL".equals(type)) mappedType = "Sequential Logic Violation";
+        
+        String mappedReason = reason;
+        if ("Global latency degradation detected".equals(reason)) mappedReason = "Users are experiencing slower response times on this endpoint";
+        else if ("Global traffic spike detected".equals(reason)) mappedReason = "Sudden increase in user activity detected";
+        else if ("High response time detected".equals(reason)) mappedReason = "Request processing is slower than expected";
+        else if ("Client/endpoint error spike".equals(reason) || "Error rate increased".equals(reason)) mappedReason = "Multiple request failures detected for this activity";
+
+        anomaly.setAnomalyType(mappedType);
+        anomaly.setDescription(mappedReason);
+
         String rawEndpoint = logEvent.getEndpoint();
-        if (rawEndpoint == null || rawEndpoint.trim().isEmpty()) {
-            rawEndpoint = "UNKNOWN_ENDPOINT";
+        if (rawEndpoint == null || rawEndpoint.trim().isEmpty() || "UNKNOWN_ENDPOINT".equals(rawEndpoint.trim())) {
+            rawEndpoint = "System-wide";
         }
         anomaly.setSourceLayer(rawEndpoint);
         anomaly.setSessionId(logEvent.getSessionId());
