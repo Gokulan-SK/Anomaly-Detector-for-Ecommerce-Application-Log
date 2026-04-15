@@ -1,0 +1,63 @@
+# ─── Maven ────────────────────────────────────────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ─── Gradle (if ever added) ───────────────────────────────────────────────────
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ─── IDE ──────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache
+.apt_generated
+.factorypath
+
+# ─── Spring Boot / Java ───────────────────────────────────────────────────────
+*.jar
+*.war
+*.ear
+*.nar
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+*.gz
+
+# ─── Database ─────────────────────────────────────────────────────────────────
+*.db
+*.trace.db
+
+# ─── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Temp ─────────────────────────────────────────────────────────────────────
+*.tmp
+*.temp
+
+# ─── Environment / Secrets ────────────────────────────────────────────────────
+.env
+.env.*
+application-local.properties
+application-secret.properties
+src/main/resources/application.properties
+
+# ─── React / Node (anomaly-dashboard) ─────────────────────────────────────────
+anomaly-dashboard/node_modules/
+anomaly-dashboard/dist/
+anomaly-dashboard/.env
+anomaly-dashboard/.env.*
+anomaly-dashboard/*.local

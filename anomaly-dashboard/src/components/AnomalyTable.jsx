@@ -27,41 +27,27 @@ export default function AnomalyTable({ anomalies }) {
               <th className="px-6 py-4 font-medium">Type</th>
               <th className="px-6 py-4 font-medium">Endpoint</th>
               <th className="px-6 py-4 font-medium">Severity</th>
-              <th className="px-6 py-4 font-medium">Impact</th>
               <th className="px-6 py-4 font-medium">Score</th>
               <th className="px-6 py-4 font-medium">Description</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700">
-            {anomalies.map((a) => {
-              const impactMapping = {
-                CRITICAL: 'High User Impact',
-                HIGH: 'Significant Impact',
-                MEDIUM: 'Moderate Impact',
-                LOW: 'Low Impact'
-              };
-              const impactText = impactMapping[a.severity] || 'Unknown Impact';
-
-              return (
-                <tr key={a.id || Math.random().toString()} className={`hover:bg-slate-700/50 transition-colors ${a.severity === 'CRITICAL' ? 'bg-red-900/10' : ''}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {format(new Date(a.timestamp || new Date()), 'MMM dd HH:mm:ss')}
-                  </td>
-                  <td className="px-6 py-4">{a.anomalyType}</td>
-                  <td className="px-6 py-4 font-mono text-xs text-slate-400">{a.sourceLayer}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${severityColors[a.severity] || severityColors.LOW}`}>
-                      {a.severity}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs font-medium text-slate-300">
-                    {impactText}
-                  </td>
-                  <td className="px-6 py-4 font-mono">{a.score}</td>
-                  <td className="px-6 py-4 truncate max-w-xs" title={a.description}>{a.description}</td>
-                </tr>
-              );
-            })}
+            {anomalies.map((a) => (
+              <tr key={a.id || Math.random().toString()} className={`hover:bg-slate-700/50 transition-colors ${a.severity === 'CRITICAL' ? 'bg-red-900/10' : ''}`}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {format(new Date(a.timestamp || new Date()), 'MMM dd HH:mm:ss')}
+                </td>
+                <td className="px-6 py-4">{a.anomalyType}</td>
+                <td className="px-6 py-4 font-mono text-xs text-slate-400">{a.sourceLayer}</td>
+                <td className="px-6 py-4">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${severityColors[a.severity] || severityColors.LOW}`}>
+                    {a.severity}
+                  </span>
+                </td>
+                <td className="px-6 py-4 font-mono">{a.score}</td>
+                <td className="px-6 py-4 truncate max-w-xs" title={a.description}>{a.description}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

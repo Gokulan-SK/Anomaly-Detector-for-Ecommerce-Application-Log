@@ -40,14 +40,15 @@ public class AnomalyDetectorService {
             anomaly.setAnomalyType("SYSTEM");
             anomaly.setDescription(desc);
             String rawEndpoint = logEvent.getEndpoint();
-            if (rawEndpoint == null || rawEndpoint.trim().isEmpty() || "UNKNOWN_ENDPOINT".equals(rawEndpoint.trim())) {
-                rawEndpoint = "System-wide";
+            if (rawEndpoint == null || rawEndpoint.trim().isEmpty()) {
+                rawEndpoint = "UNKNOWN_ENDPOINT";
             }
             anomaly.setSourceLayer(rawEndpoint);
             anomaly.setSessionId(logEvent.getSessionId());
             anomaly.setCorrelationId(logEvent.getCorrelationId());
             anomaly.setSeverity("CRITICAL");
-            if (anomaly != null) anomalyRepository.save(anomaly);
+            if (anomaly != null)
+                anomalyRepository.save(anomaly);
             return Optional.of(anomaly);
         }
 
@@ -99,7 +100,8 @@ public class AnomalyDetectorService {
             if (hasCheckout && !hasPaymentAfter && !isCurrentCheckout) {
                 markAnomaly(key, "SEQUENTIAL", logEvent.getTimestamp());
                 AnomalyEvent anomaly = buildAnomaly("SEQUENTIAL", "Checkout without payment", logEvent);
-                if (anomaly != null) anomalyRepository.save(anomaly);
+                if (anomaly != null)
+                    anomalyRepository.save(anomaly);
                 return Optional.of(anomaly);
             }
         }
@@ -130,7 +132,8 @@ public class AnomalyDetectorService {
                     || (hasTraffic && sessionRequestRate > 3.0 * globalRate && sessionRequestRate > 5.0)) {
                 markAnomaly(key, "VOLUME", logEvent.getTimestamp());
                 AnomalyEvent anomaly = buildAnomaly("VOLUME", "High request burst (possible bot)", logEvent);
-                if (anomaly != null) anomalyRepository.save(anomaly);
+                if (anomaly != null)
+                    anomalyRepository.save(anomaly);
                 return Optional.of(anomaly);
             }
         }
@@ -151,7 +154,8 @@ public class AnomalyDetectorService {
             if (baselineReady && hasTraffic && sessionErrorRate > 2.0 * globalErrorRate) {
                 markAnomaly(key, "ERROR", logEvent.getTimestamp());
                 AnomalyEvent anomaly = buildAnomaly("ERROR", "Client/endpoint error spike", logEvent);
-                if (anomaly != null) anomalyRepository.save(anomaly);
+                if (anomaly != null)
+                    anomalyRepository.save(anomaly);
                 return Optional.of(anomaly);
             }
         }
@@ -164,7 +168,8 @@ public class AnomalyDetectorService {
                 if (currentLatency > 2.5 * globalAverageLatency && currentLatency > 100) {
                     markAnomaly(key, "LATENCY", logEvent.getTimestamp());
                     AnomalyEvent anomaly = buildAnomaly("LATENCY", "High response time detected", logEvent);
-                    if (anomaly != null) anomalyRepository.save(anomaly);
+                    if (anomaly != null)
+                        anomalyRepository.save(anomaly);
                     return Optional.of(anomaly);
                 }
             }
@@ -179,7 +184,8 @@ public class AnomalyDetectorService {
                 if (longTermRate > 0.0 && globalRate > 3.0 * longTermRate && globalRate > 0.0) {
                     markAnomaly(globalKey, "GLOBAL_VOLUME", logEvent.getTimestamp());
                     AnomalyEvent anomaly = buildAnomaly("GLOBAL_VOLUME", "Global traffic spike detected", logEvent);
-                    if (anomaly != null) anomalyRepository.save(anomaly);
+                    if (anomaly != null)
+                        anomalyRepository.save(anomaly);
                     return Optional.of(anomaly);
                 }
             }
@@ -190,7 +196,8 @@ public class AnomalyDetectorService {
                 if (longTermErrorRate > 0.0 && globalErrorRate > 2.0 * longTermErrorRate && globalErrorRate > 0.0) {
                     markAnomaly(globalKey, "GLOBAL_ERROR", logEvent.getTimestamp());
                     AnomalyEvent anomaly = buildAnomaly("GLOBAL_ERROR", "Global error spike detected", logEvent);
-                    if (anomaly != null) anomalyRepository.save(anomaly);
+                    if (anomaly != null)
+                        anomalyRepository.save(anomaly);
                     return Optional.of(anomaly);
                 }
             }
@@ -201,8 +208,10 @@ public class AnomalyDetectorService {
                 if (longTermLatency > 0.0 && globalAverageLatency > 2.0 * longTermLatency
                         && globalAverageLatency > 0.0) {
                     markAnomaly(globalKey, "GLOBAL_LATENCY", logEvent.getTimestamp());
-                    AnomalyEvent anomaly = buildAnomaly("GLOBAL_LATENCY", "Global latency degradation detected", logEvent);
-                    if (anomaly != null) anomalyRepository.save(anomaly);
+                    AnomalyEvent anomaly = buildAnomaly("GLOBAL_LATENCY", "Global latency degradation detected",
+                            logEvent);
+                    if (anomaly != null)
+                        anomalyRepository.save(anomaly);
                     return Optional.of(anomaly);
                 }
             }
@@ -231,27 +240,11 @@ public class AnomalyDetectorService {
 
     private AnomalyEvent buildAnomaly(String type, String reason, LogEvent logEvent) {
         AnomalyEvent anomaly = new AnomalyEvent();
-        
-        String mappedType = type;
-        if ("GLOBAL_LATENCY".equals(type)) mappedType = "Slow User Experience";
-        else if ("GLOBAL_VOLUME".equals(type)) mappedType = "Unusual Traffic Activity";
-        else if ("LATENCY".equals(type)) mappedType = "Slow Response Detected";
-        else if ("VOLUME".equals(type)) mappedType = "High Activity Detected";
-        else if ("ERROR".equals(type)) mappedType = "Repeated Request Failures";
-        else if ("SEQUENTIAL".equals(type)) mappedType = "Sequential Logic Violation";
-        
-        String mappedReason = reason;
-        if ("Global latency degradation detected".equals(reason)) mappedReason = "Users are experiencing slower response times on this endpoint";
-        else if ("Global traffic spike detected".equals(reason)) mappedReason = "Sudden increase in user activity detected";
-        else if ("High response time detected".equals(reason)) mappedReason = "Request processing is slower than expected";
-        else if ("Client/endpoint error spike".equals(reason) || "Error rate increased".equals(reason)) mappedReason = "Multiple request failures detected for this activity";
-
-        anomaly.setAnomalyType(mappedType);
-        anomaly.setDescription(mappedReason);
-
+        anomaly.setAnomalyType(type);
+        anomaly.setDescription(reason);
         String rawEndpoint = logEvent.getEndpoint();
-        if (rawEndpoint == null || rawEndpoint.trim().isEmpty() || "UNKNOWN_ENDPOINT".equals(rawEndpoint.trim())) {
-            rawEndpoint = "System-wide";
+        if (rawEndpoint == null || rawEndpoint.trim().isEmpty()) {
+            rawEndpoint = "UNKNOWN_ENDPOINT";
         }
         anomaly.setSourceLayer(rawEndpoint);
         anomaly.setSessionId(logEvent.getSessionId());

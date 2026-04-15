@@ -1,0 +1,24 @@
+# =============================================
+# Anomaly Detection Service - Application Config
+# TEMPLATE FILE - copy to application.properties and fill in your values
+# =============================================
+
+# Server
+server.port=8082
+
+# =============================================
+# MySQL Database Configuration
+# =============================================
+spring.datasource.url=jdbc:mysql://localhost:3306/anomalydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA / Hibernate
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# Jackson
+spring.jackson.serialization.indent-output=true

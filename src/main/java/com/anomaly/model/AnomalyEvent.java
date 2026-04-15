@@ -2,6 +2,7 @@ package com.anomaly.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 /**
  * AnomalyEvent is the core JPA entity representing a detected anomaly.
@@ -68,6 +69,23 @@ public class AnomalyEvent {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    /**
+     * Username associated with the session/request that triggered this anomaly.
+     * Populated from the log's sessionId context when available.
+     * Defaults to "system" when no user context exists.
+     * No foreign key — decoupled from the users table intentionally.
+     */
+    @Column(name = "username", length = 100)
+    private String username;
+
+    /**
+     * Embedding vector representing the anomaly context.
+     * Stored as a JSON array in the database.
+     */
+    @Convert(converter = DoubleListConverter.class)
+    @Column(name = "embedding", columnDefinition = "JSON")
+    private List<Double> embedding;
+
     // -------------------------
     // Lifecycle Hooks
     // -------------------------
@@ -125,6 +143,12 @@ public class AnomalyEvent {
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public List<Double> getEmbedding() { return embedding; }
+    public void setEmbedding(List<Double> embedding) { this.embedding = embedding; }
+
     @Override
     public String toString() {
         return "AnomalyEvent{" +
@@ -134,6 +158,7 @@ public class AnomalyEvent {
                 ", correlationId='" + correlationId + '\'' +
                 ", sessionId='" + sessionId + '\'' +
                 ", severity='" + severity + '\'' +
+                ", username='" + username + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
                 '}';

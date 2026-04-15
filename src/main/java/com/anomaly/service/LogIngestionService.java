@@ -78,7 +78,15 @@ public class LogIngestionService {
 
     public void ingest(LogEvent logEvent) {
         log.debug("LogIngestionService.ingest(LogEvent) called — event: {}", logEvent);
-        anomalyDetectorService.detect(logEvent).ifPresent(anomalyService::save);
+        anomalyDetectorService.detect(logEvent).ifPresent(anomaly -> {
+            // Attach username from the log's session context.
+            // sessionId is the closest proxy available in the log; falls back to "system".
+            String username = (logEvent.getSessionId() != null && !logEvent.getSessionId().isBlank())
+                    ? logEvent.getSessionId()
+                    : "system";
+            anomaly.setUsername(username);
+            anomalyService.save(anomaly);
+        });
     }
 
     private Path resolveLogPath(String fileName) {
