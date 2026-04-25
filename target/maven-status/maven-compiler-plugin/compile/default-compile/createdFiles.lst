@@ -1,8 +1,0 @@
-com\anomaly\controller\AnomalyController.class
-com\anomaly\service\LogIngestionService.class
-com\anomaly\model\AnomalyEvent.class
-com\anomaly\AnomalyDetectionServiceApplication.class
-com\anomaly\repository\AnomalyRepository.class
-com\anomaly\service\LogParserService.class
-com\anomaly\model\LogEvent.class
-com\anomaly\service\AnomalyService.class
