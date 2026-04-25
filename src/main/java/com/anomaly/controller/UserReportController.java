@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/reports")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserReportController {
 
     private final AnomalyRepository anomalyRepository;

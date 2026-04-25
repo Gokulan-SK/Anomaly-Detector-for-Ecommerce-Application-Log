@@ -3,6 +3,7 @@ import { AlertCircle, Activity, ShieldAlert } from 'lucide-react';
 import Filters from './Filters';
 import Charts from './Charts';
 import AnomalyTable from './AnomalyTable';
+import RagChat from './RagChat';
 
 export default function Dashboard({ anomalies }) {
   const [textFilter, setTextFilter] = useState('');
@@ -21,7 +22,7 @@ export default function Dashboard({ anomalies }) {
     });
   }, [anomalies, textFilter, severityFilter]);
 
-  // Use raw anomalies for top-level stats context, but you can also use filteredAnomalies if you want the dashboard stats to respond to filters
+  // Use raw anomalies for top-level stats context
   const totalCount = anomalies.length;
   const highCriticalCount = anomalies.filter(a => a.severity === 'HIGH' || a.severity === 'CRITICAL').length;
   const uniqueEndpoints = new Set(anomalies.map(a => a.sourceLayer)).size;
@@ -83,6 +84,9 @@ export default function Dashboard({ anomalies }) {
         />
         <AnomalyTable anomalies={filteredAnomalies} />
       </div>
+
+      {/* RAG Chat Section */}
+      <RagChat />
     </div>
   );
 }

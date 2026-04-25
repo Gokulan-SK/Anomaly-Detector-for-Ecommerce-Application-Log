@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/reports")
-@CrossOrigin(origins = "*") // Allows React to call
+@CrossOrigin(origins = "http://localhost:5173") // Allows React to call
 public class ReportController {
 
     private final ReportService reportService;

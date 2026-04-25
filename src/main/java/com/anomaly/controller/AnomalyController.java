@@ -23,7 +23,7 @@ import java.util.List;
  *  - GET  /anomalies           — Retrieve all detected anomalies from DB
  *  - GET  /anomalies/{id}      — Retrieve a single anomaly by ID
  */
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/anomalies")
 public class AnomalyController {
